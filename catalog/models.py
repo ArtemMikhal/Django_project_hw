@@ -3,12 +3,12 @@ from django.db import models
 NULLABLE = {'blank': True, 'null': True}
 class Product(models.Model):
     name = models.CharField(max_length=100, verbose_name='наименование продукта')
-    description = models.CharField(max_length=300, verbose_name='описание')
+    description = models.TextField(verbose_name='описание')
     preview = models.ImageField(upload_to='product/', verbose_name='изображение', **NULLABLE)
     category = models.ForeignKey('Category', on_delete=models.PROTECT)
-    price = models.IntegerField(verbose_name='цена за штуку')
-    date_of_creation = models.DateField(verbose_name='дата создания')
-    date_modification = models.DateField(verbose_name='дата последнего изменения')
+    price = models.PositiveIntegerField(verbose_name='цена за штуку')
+    date_of_creation = models.DateField(auto_now_add=True, verbose_name='дата создания')
+    date_modification = models.DateField(auto_now=True, verbose_name='дата последнего изменения')
 
     def __str__(self):
         return f'{self.name} {self.description} {self.category} ' \
@@ -20,11 +20,11 @@ class Product(models.Model):
         ordering = ('name',)
 
 class Category(models.Model):
-    category_name = models.CharField(max_length=100, verbose_name='наименование категории')
-    description = models.CharField(max_length=300, verbose_name='описание')
+    name = models.CharField(max_length=100, verbose_name='наименование категории')
+    description = models.TextField(verbose_name='описание')
 
     def __str__(self):
-        return f'{self.category_name} {self.description}'
+        return f'{self.name} {self.description}'
 
     class Meta:
         verbose_name = 'Категория'
