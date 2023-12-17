@@ -1,5 +1,5 @@
 {% extends 'catalog/base.html' %}
-{% load mediapath %}
+{% load my_tags %}
 {% block css %}
 <style>
     .card-img-top {
@@ -21,9 +21,8 @@
     <div class="container">
         <h1 align="center">{{ product.name }}</h1>
         <div class="product-image">
-            <img src="{% mediapath product.image %}"  class="bd-placeholder-img card-img-top" alt="Product Image">
+            <img src="{{ product.preview|mediapath }}" class="bd-placeholder-img card-img-top" alt="Product Image">
         </div>
         <p><strong>Цена: {{ product.price }}</strong></p>
         <p align="justify">Описание: {{ product.description }}</p>
-
 {% endblock %}
