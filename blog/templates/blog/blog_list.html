@@ -1,0 +1,45 @@
+﻿{% extends 'blog/base_blog.html' %}
+
+{% load my_tags %}
+
+{% block content %}
+<div class="album py-5 bg-body-tertiary">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for object in object_list %}
+            <div class="col mb-4">
+                <div class="card h-100">
+                    <div class="row g-0">
+                        <div class="col-md-6">
+                            <div class="card-body position-relative" style="max-width: 400px; max-height: 200px;">
+                                <div class="position-absolute top-0">
+                                    <div class="mb-1 text-body-secondary">{{ object.date_of_creation}}</div>
+                                </div>
+                                <hr>
+                                <h5 class="mb-1">{{ object.title|truncatechars:50 }}</h5>
+                                <hr>
+                                <p class="card-text mb-3">{{ object.content|truncatechars:55 }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a href="{% url 'blog:view' object.pk %}">
+                                            <button class="btn btn-sm btn-secondary me-2">Просмотреть</button>
+                                        </a>
+                                        <a href="{% url 'blog:edit' object.pk %}">
+                                            <button class="btn btn-sm btn-secondary me-2">Изменить</button>
+                                        </a>
+                                        <a href="{% url 'blog:delete' object.pk %}">
+                                            <button class="btn btn-sm btn-secondary">Удалить</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-end">
+                            <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+  {% endblock %}
