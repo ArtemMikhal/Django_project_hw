@@ -2,6 +2,7 @@
 
 from catalog.models import Product
 
+forbidden_words = ['казино', 'криптовалюта', 'крипта', 'биржа', 'дешево', 'бесплатно', 'обман', 'полиция', 'радар']
 
 class ProductForm(forms.ModelForm):
 
@@ -12,4 +13,21 @@ class ProductForm(forms.ModelForm):
         #fields = ('name', 'description' ) определенные атрибуты
         #exclude = ('preview') для исключения какого-либо атрибута
 
+    def clean_name(self):
+        name = self.cleaned_data.get('name', '')
+
+        for word in forbidden_words:
+            if word.lower() in name.lower():
+                raise forms.ValidationError(f"Использование слова '{word}' запрещено в названии продукта.")
+
+        return name
+
+    def clean_description(self):
+        description = self.cleaned_data.get('description', '')
+
+        for word in forbidden_words:
+            if word.lower() in description.lower():
+                raise forms.ValidationError(f"Использование слова '{word}' запрещено в описании продукта.")
+
+        return description
 

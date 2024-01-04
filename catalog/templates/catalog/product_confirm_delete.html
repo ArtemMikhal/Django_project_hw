@@ -1,0 +1,22 @@
+﻿{% extends 'catalog/base.html' %}
+
+{% load my_tags %}
+
+{% block content %}
+
+<div class="album py-5 bg-body-tertiary">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-10">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <p>Хотите удалить "{{ object.name }}"?</p>
+                        <button type="submit" class="btn btn-danger">Подтвердить</button>
+                        <a href="{% url 'catalog:home' %}" class="btn btn-success">Отменить</a>
+                    </form>
+                </div>
+            </div>
+            {% endblock %}
+
