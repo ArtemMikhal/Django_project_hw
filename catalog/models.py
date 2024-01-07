@@ -13,6 +13,12 @@ class Product(models.Model):
     def __str__(self):
         return f'{self.name}'
 
+    def get_active_version(self):
+        try:
+            return self.version_set.get(is_active=True)
+        except Version.DoesNotExist:
+            return None
+
     class Meta:
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
@@ -28,3 +34,17 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
+
+
+class Version(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    version_number = models.IntegerField(**NULLABLE, verbose_name='Номер версии')
+    version_name = models.CharField(max_length=100, verbose_name='Наименование версии')
+    is_active = models.BooleanField(default=True, verbose_name='Текущая версия')
+
+    def __str__(self):
+        return f"Версия {self.version_number} - {self.version_name} для продукта {self.product}"
+
+    class Meta:
+        verbose_name = 'Версия'
+        verbose_name_plural = 'Версии'
