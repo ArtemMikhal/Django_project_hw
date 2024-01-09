@@ -10,10 +10,7 @@ class ProductListView(ListView):
     template_name = 'catalog/home.html'
     context_object_name = 'products'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['active_versions'] = [product.get_active_version() for product in context['products']]
-        return context
+
 
 def contacts_page(request):
     return render(request, 'catalog/contacts.html')
@@ -32,14 +29,14 @@ class ProductUpdateView(UpdateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:home')
+    formset_class = inlineformset_factory(Product, Version, form=VersionForm, extra=1, fields=('version_number', 'version_name', 'is_active'))
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        VersionFormset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
         if self.request.method == 'POST':
-            context_data['formset'] = VersionFormset(self.request.POST, instance=self.object)
+            context_data['formset'] = self.formset_class(self.request.POST, instance=self.object)
         else:
-            context_data['formset'] = VersionFormset(instance=self.object)
+            context_data['formset'] = self.formset_class(instance=self.object)
         return context_data
 
     def form_valid(self, form):
@@ -47,10 +44,8 @@ class ProductUpdateView(UpdateView):
         self.object = form.save()
         if formset.is_valid():
             formset.instance = self.object
-            form.save()
+            formset.save()
         return super().form_valid(form)
-
-
 
 
 class ProductDeleteView(DeleteView):
