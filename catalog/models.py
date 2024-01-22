@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+
 
 NULLABLE = {'blank': True, 'null': True}
 class Product(models.Model):
@@ -9,6 +11,7 @@ class Product(models.Model):
     price = models.PositiveIntegerField(verbose_name='цена за штуку')
     date_of_creation = models.DateField(auto_now_add=True, verbose_name='дата создания')
     date_modification = models.DateField(auto_now=True, verbose_name='дата последнего изменения')
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, default=None, null=True, verbose_name='пользователь')
 
     def __str__(self):
         return f'{self.name}'

@@ -139,13 +139,19 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'amikhalchenkov@yandex.ru'
-EMAIL_HOST_PASSWORD = '1DEM9I9DOV393'
+EMAIL_HOST_USER = 'AMikhalchenkov'
+EMAIL_HOST_PASSWORD = 'nflzbbsvedjqtqcj'
 EMAIL_USE_TLS = True
 
-CSRF_COOKIE_SECURE = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+
+
+
+CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = True
