@@ -1,13 +1,55 @@
-<nav class="ms-5">
-        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home' %}">Главная</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:create_product' %}">Добавить товар</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts' %}">Контакты</a>
-        {% if user.is_authenticated %}
-            <a class="p-2 btn btn-outline-primary" href="{% url 'users:profile' %}">Профиль</a>
-            <a class="p-2 btn btn-outline-primary" href="{% url 'users:logout' %}">Выйти</a>
-        {% else %}
-            <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}">Войти</a>
-            <a class="p-2 btn btn-outline-primary" href="{% url 'users:register' %}">Регистрация</a>
-        {% endif %}
+<style>
+    .avatar-container {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 9999;
+        transition: top 0.3s ease-in-out;
+    }
+    .btn-login {
+        border-color: green;
+        color: green;
+    }
+    .btn-register {
+        border-color: green;
+        color: green;
+    }
+    .btn-logout {
+        border-color: red;
+        color: red;
+    }
+    .hide-avatar-container {
+        top: -60px;
+    }
+</style>
 
-    </nav>
+<script>
+    window.addEventListener("scroll", function() {
+        var avatarContainer = document.querySelector(".avatar-container");
+        if (window.pageYOffset > 100) {
+            avatarContainer.classList.add("hide-avatar-container");
+        } else {
+            avatarContainer.classList.remove("hide-avatar-container");
+        }
+    });
+</script>
+
+<nav class="ms-5">
+    <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home' %}">Главная</a>
+    <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:create_product' %}">Добавить товар</a>
+    <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts' %}">Контакты</a>
+    <div class="avatar-container">
+        {% if user.is_authenticated %}
+            <a class="p-2 btn btn-outline-primary" href="{% url 'users:profile' pk=user.pk %}">Профиль</a>
+            <a class="p-2 btn btn-logout" href="{% url 'users:logout' %}">Выйти</a>
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="Аватар" class="avatar-img" style="width: 60px; height: 60px; border-radius: 50%;">
+            {% else %}
+                <img src="/static/path/to/default/avatar.png" alt="Аватар" class="avatar-img" style="width: 60px; height: 60px; border-radius: 50%;">
+            {% endif %}
+        {% else %}
+            <a class="p-2 btn btn-outline-primary btn-login" href="{% url 'users:login' %}">Войти</a>
+            <a class="p-2 btn btn-outline-primary btn-register" href="{% url 'users:register' %}">Регистрация</a>
+        {% endif %}
+    </div>
+</nav>
