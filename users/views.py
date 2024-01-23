@@ -1,5 +1,9 @@
+from random import random, randint
+
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordResetView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.http import HttpResponseForbidden
@@ -19,7 +23,6 @@ class RegisterView(CreateView):
     form_class = UserRegisterForm
     template_name = 'users/register.html'
     success_url = reverse_lazy('users:login')
-
 
 
     def form_valid(self, form):
@@ -60,12 +63,30 @@ class VerifyEmailView(View):
 class ProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserProfileForm
-    success_url = reverse_lazy('users:profile')
+    success_url = reverse_lazy('catalog:home')
 
     def dispatch(self, request, *args, **kwargs):
         if not self.request.user.is_verified:
             return HttpResponseForbidden("Ваша электронная почта еще не проверена.")
         return super().dispatch(request, *args, **kwargs)
 
-    def get_object(self, queryset=None):
-        return self.request.user
+
+class CustomPasswordResetView(PasswordResetView):
+    def form_valid(self, form):
+        # Генерация нового случайного пароля
+        new_password = ''.join([str(randint(0, 9)) for _ in range(12)])
+        email = form.cleaned_data['email']
+        User = get_user_model()
+        user = User.objects.get(email=email)
+        user.set_password(new_password)
+        user.save()
+
+        # Отправка нового пароля пользователю по электронной почте
+        send_mail(
+            subject='Восстановление пароля',
+            message=f'Ваш новый пароль: {new_password}',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[user.email]
+        )
+
+        return super().form_valid(form)
