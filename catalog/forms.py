@@ -16,8 +16,7 @@ class ProductForm(StyleFormMixin,forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = '__all__'
-
+        fields = ('name', 'description', 'preview', 'category', 'price',)
         #fields = ('name', 'description' ) определенные атрибуты
         #exclude = ('preview') для исключения какого-либо атрибута
 
