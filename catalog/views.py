@@ -1,7 +1,7 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.forms import inlineformset_factory
 from django.urls import reverse_lazy, reverse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from catalog.forms import ProductForm, VersionForm
 from catalog.models import Product, Version
@@ -31,11 +31,18 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-class ProductUpdateView(LoginRequiredMixin, UpdateView):
+class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
+    permission_required = 'catalog.change_product'
     success_url = reverse_lazy('catalog:home')
-    formset_class = inlineformset_factory(Product, Version, form=VersionForm, extra=1, fields=('version_number', 'version_name', 'is_active'))
+    formset_class = inlineformset_factory(Product, Version, form=VersionForm, extra=1, fields=('version_number',
+                                                                                               'version_name',
+                                                                                               'is_active'))
+
+    def has_permission(self):
+        product = self.get_object()
+        return product.has_permission_to_change(self.request.user)
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -54,6 +61,12 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class ProductDeleteView(LoginRequiredMixin, DeleteView):
+
+class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Product
+    permission_required = 'catalog.delete_product'
     success_url = reverse_lazy('catalog:home')
+
+    def has_permission(self):
+        product = self.get_object()
+        return product.has_permission_to_delete(self.request.user)

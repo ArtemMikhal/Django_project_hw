@@ -25,6 +25,12 @@ class Product(models.Model):
         verbose_name_plural = 'Продукты'
         ordering = ('name',)
 
+    def has_permission_to_change(self, user):
+        return self.user == user
+
+    def has_permission_to_delete(self, user):
+        return self.user == user
+
     def __str__(self):
         return f'{self.name}'
 
