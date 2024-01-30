@@ -1,24 +1,27 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.forms import inlineformset_factory
+from django.template.context_processors import request
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from catalog.forms import ProductForm, VersionForm
 from catalog.models import Product, Version
-
+from  catalog.services import get_cached_categories
 class ProductListView(ListView):
     model = Product
     template_name = 'catalog/home.html'
     context_object_name = 'products'
 
 
-
 def contacts_page(request):
     return render(request, 'catalog/contacts.html')
+
 
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'catalog/product.html'
+
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
@@ -30,6 +33,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
 
 class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Product
@@ -61,7 +65,6 @@ class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
         return super().form_valid(form)
 
 
-
 class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Product
     permission_required = 'catalog.delete_product'
@@ -70,3 +73,10 @@ class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView)
     def has_permission(self):
         product = self.get_object()
         return product.has_permission_to_delete(self.request.user)
+
+def categories(request):
+    context = {
+        'object_list': get_cached_categories(),
+        'title': 'Все категории'
+    }
+    return render(request, 'catalog/categories.html', context)

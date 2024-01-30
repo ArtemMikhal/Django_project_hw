@@ -37,6 +37,7 @@
 <nav class="ms-5">
     <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home' %}">Главная</a>
     <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:create_product' %}">Добавить товар</a>
+    <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:categories' %}">Категории</a>
     <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts' %}">Контакты</a>
     <div class="avatar-container">
         {% if user.is_authenticated %}
